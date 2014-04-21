@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # re-configure docker to listen over tcp
     # TODO: make idempotent via .d/ pattern?
     echo 'DOCKER_OPTS="-H unix:///var/run/docker.sock -H tcp://0.0.0.0:4243"' >> /etc/default/docker.io
-    restart docker.io && sleep 1
+    restart docker.io && sleep 2
 
     # verify docker w/ minimal busybox image
     docker.io run busybox /bin/sh -c "busybox | head -1"
