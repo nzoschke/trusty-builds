@@ -1,0 +1,23 @@
+#!/bin/bash
+set -x
+TMP_DIR=/app/usr/logs
+
+# job control: clean up everything on TERM (or unicorn exit)
+set -o monitor
+function term {
+  kill -TERM $(jobs -p)
+}
+trap term EXIT
+
+# template config from ENV and fork nginx and log tails
+touch $TMP_DIR/{access,error}.log
+tail -fq -n0 $TMP_DIR/access.log &
+tail -fq -n0 $TMP_DIR/error.log  &
+
+ruby -rerb -e "puts ERB.new(ARGF.read).result(binding)" nginx.conf.erb > $TMP_DIR/nginx.conf
+nginx -c $TMP_DIR/nginx.conf &
+
+# exec unicorn
+bundle exec unicorn -c unicorn.conf.rb &
+wait $!
+term
