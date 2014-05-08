@@ -10,7 +10,7 @@ vm:
 image: vm
 	docker build -t slug .
 
-slug:
+slug.tgz:
 	# docker cp may exit non-zero due to a file permissions bug. Ignore
 	ID=$$(docker run -d slug tar cfvz /tmp/slug.tgz -C / --exclude=.git --exclude=.vagrant --exclude=usr/src ./app);\
 	docker wait $$ID;\
